@@ -106,9 +106,10 @@ FROM covid_deaths
 ORDER BY location, record_date;
 
 -- Countries with the highest infected rate
-SELECT location, population, MAX(total_cases) AS Highest_infected_Countries, MAX(total_cases * 100.0 /population) :: FLOAT4 AS percent_population_infected
+SELECT location, population, record_date, MAX(total_cases) AS Highest_infected_Countries, MAX(total_cases * 100.0 /population) :: FLOAT4 AS percent_population_infected
 FROM covid_deaths
-GROUP BY location, population
+WHERE location NOT IN ('World', 'European Union', 'International', 'Europe', 'Africa', 'Oceania', 'Asia', 'North America', 'South America')
+GROUP BY location, population, record_date
 ORDER BY percent_population_infected DESC, highest_infected_countries DESC;
 
 --Continent covered
@@ -136,6 +137,14 @@ SELECT continent, MAX(total_deaths) AS Total_deaths_count
 FROM covid_deaths
 WHERE continent IS NOT NULL
 GROUP BY continent
+ORDER BY Total_deaths_count DESC;
+
+--Showing continent only with the highest death count
+SELECT location, MAX(total_deaths) AS Total_deaths_count
+FROM covid_deaths
+WHERE total_deaths IS NOT NULL AND continent IS NULL
+	AND location NOT IN ('World', 'European Union', 'International')
+GROUP BY location
 ORDER BY Total_deaths_count DESC;
 
 --STATS GLOBALLY
